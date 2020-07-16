@@ -1,4 +1,3 @@
-
 import { ConnectionTransports } from './connection/connection.transports';
 import { ConnectionTransport } from './connection/connection.transport';
 import { IConnectionOptions } from './connection/connection.options';
@@ -11,8 +10,8 @@ export class SignalRConfiguration implements IConnectionOptions {
     /** Allows you to specify query string parameters object when the client connects */
     public qs?: any;
 
-    /** name of the SignalR service hub to connect to */
-    public hubName: string;
+    /** names of the SignalR service hubs to connect to */
+    public hubNames: string[];
 
     /** disable/enables client side logging. Defaults to false */
     public logging: boolean;
@@ -39,7 +38,7 @@ export class SignalRConfiguration implements IConnectionOptions {
     public executeStatusChangeInZone?: boolean;
 
     constructor() {
-       this.hubName = null;
+       this.hubNames = null;
        this.logging = false;
        this.qs  = null;
        this.url = null;

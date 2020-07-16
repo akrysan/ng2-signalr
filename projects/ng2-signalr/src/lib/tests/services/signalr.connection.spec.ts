@@ -8,12 +8,12 @@ describe('Connection', () => {
 
     let zone: NgZone;
     let jConnectionStub: JConnectionStub;
-    let hubProxy: JHubProxyStub;
+    let hubProxy: any;
 
     beforeEach(() => {
         zone = new NgZone({ enableLongStackTrace: true });
         jConnectionStub = new JConnectionStub();
-        hubProxy = new JHubProxyStub();
+        hubProxy = { chathub: new JHubProxyStub() };
     });
 
     afterAll(() => {
@@ -27,23 +27,23 @@ describe('Connection', () => {
 
     it('listen should proxy on listener event', () => {
         // arrange
-        spyOn(hubProxy, 'on');
+        spyOn(hubProxy.chathub, 'on');
         const connection = new SignalRConnection(jConnectionStub, hubProxy, zone, new SignalRConfiguration());
         const listener = new BroadcastEventListener<any>('OnMessageSent');
         // act
-        connection.listen(listener);
+        connection.listen('chathub', listener);
         // assert
-        expect(hubProxy.on).toHaveBeenCalledWith(listener.event, jasmine.any(Function));
+        expect(hubProxy.chathub.on).toHaveBeenCalledWith(listener.event, jasmine.any(Function));
     });
 
     it('listenFor should proxy on event', () => {
         // arrange
-        spyOn(hubProxy, 'on');
+        spyOn(hubProxy.chathub, 'on');
         const connection = new SignalRConnection(jConnectionStub, hubProxy, zone, new SignalRConfiguration());
         // act
-        const listener = connection.listenFor<any>('OnMessageSent');
+        const listener = connection.listenFor<any>('chathub', 'OnMessageSent');
         // assert
-        expect(hubProxy.on).toHaveBeenCalledWith('OnMessageSent', jasmine.any(Function));
+        expect(hubProxy.chathub.on).toHaveBeenCalledWith('OnMessageSent', jasmine.any(Function));
         expect(listener.event).toBe('OnMessageSent');
     });
 
@@ -51,8 +51,8 @@ describe('Connection', () => {
         // arrange
         const connection = new SignalRConnection(jConnectionStub, hubProxy, zone, new SignalRConfiguration());
         // act
-        const action1 = () => connection.listenFor<any>('');
-        const action2 = () => connection.listenFor<any>(null);
+        const action1 = () => connection.listenFor<any>('chathub', '');
+        const action2 = () => connection.listenFor<any>('chathub', null);
         // assert
         expect(action1).toThrow();
         expect(action2).toThrow();
