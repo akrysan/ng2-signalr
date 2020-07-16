@@ -6,52 +6,52 @@ const SIGNALR_CONFIGURATION = new InjectionToken<SignalRConfiguration>('SIGNALR_
 
 export function createSignalr(configuration: SignalRConfiguration, zone: NgZone) {
 
-    const jConnectionFn = getJConnectionFn();
+  const jConnectionFn = getJConnectionFn();
 
-    return new SignalR(configuration, zone, jConnectionFn);
+  return new SignalR(configuration, zone, jConnectionFn);
 }
 
 function getJConnectionFn(): any {
-    const jQuery = getJquery();
-    const hubConnectionFn = jQuery.hubConnection;
-    if (hubConnectionFn == null) {
-        throw new Error('Signalr failed to initialize. Script \'jquery.signalR.js\' is missing. Please make sure to include \'jquery.signalR.js\' script.');
-    }
-    return hubConnectionFn;
+  const jQuery = getJquery();
+  const hubConnectionFn = jQuery.hubConnection;
+  if (hubConnectionFn == null) {
+    throw new Error('Signalr failed to initialize. Script \'jquery.signalR.js\' is missing. Please make sure to include \'jquery.signalR.js\' script.');
+  }
+  return hubConnectionFn;
 }
 
 function getJquery(): any {
-    const jQuery = (window as any).jQuery;
-    if (jQuery == null) {
-        throw new Error('Signalr failed to initialize. Script \'jquery.js\' is missing. Please make sure to include jquery script.');
-    }
-    return jQuery;
+  const jQuery = (window as any).jQuery;
+  if (jQuery == null) {
+    throw new Error('Signalr failed to initialize. Script \'jquery.js\' is missing. Please make sure to include jquery script.');
+  }
+  return jQuery;
 }
 
 @NgModule({
-    providers: [{
-        provide: SignalR,
-        useValue: SignalR
-    }]
+  providers: [{
+    provide: SignalR,
+    useValue: SignalR
+  }]
 })
 export class SignalRModule {
-    public static forRoot(getSignalRConfiguration: () => void): ModuleWithProviders<SignalRModule> {
-        return {
-            ngModule: SignalRModule,
-            providers: [
-                {
-                    provide: SIGNALR_CONFIGURATION,
-                    useFactory: getSignalRConfiguration
-                },
-                {
-                    deps: [SIGNALR_CONFIGURATION, NgZone],
-                    provide: SignalR,
-                    useFactory: (createSignalr)
-                }
-            ],
-        };
-    }
-    public static forChild(): ModuleWithProviders {
-        throw new Error('forChild method not implemented');
-    }
+  public static forRoot(getSignalRConfiguration: () => void): ModuleWithProviders<SignalRModule> {
+    return {
+      ngModule: SignalRModule,
+      providers: [
+        {
+          provide: SIGNALR_CONFIGURATION,
+          useFactory: getSignalRConfiguration
+        },
+        {
+          deps: [SIGNALR_CONFIGURATION, NgZone],
+          provide: SignalR,
+          useFactory: (createSignalr)
+        }
+      ],
+    };
+  }
+  public static forChild(): ModuleWithProviders<SignalRModule> {
+    throw new Error('forChild method not implemented');
+  }
 }
