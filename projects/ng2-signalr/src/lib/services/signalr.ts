@@ -33,12 +33,15 @@ export class SignalR {
         jConnection.logging = configuration.logging;
         jConnection.qs = configuration.qs;
 
-        // create a proxy
-        const jProxy = jConnection.createHubProxy(configuration.hubName);
-        // !!! important. We need to register at least one function otherwise server callbacks will not work.
-        jProxy.on('noOp', () => { /* */ });
+        // create proxies
+        const jProxies = {};
+        configuration.hubNames.forEach(hubName => {
+            const lowerCaseHubName = hubName.toLowerCase();
+            jProxies[lowerCaseHubName] = jConnection.createHubProxy(lowerCaseHubName);
+            jProxies[lowerCaseHubName].on('noOp', () => { /* */ });
+        });
 
-        const hubConnection = new SignalRConnection(jConnection, jProxy, this._zone, configuration);
+        const hubConnection = new SignalRConnection(jConnection, jProxies, this._zone, configuration);
 
         return hubConnection;
     }
@@ -54,7 +57,7 @@ export class SignalR {
             if (configuration.logging) {
                 this.log(`Creating connecting with...`);
                 this.log(`configuration:[url: '${configuration.url}'] ...`);
-                this.log(`configuration:[hubName: '${configuration.hubName}'] ...`);
+                this.log(`configuration:[hubNames: '${configuration.hubNames}'] ...`);
                 this.log(`configuration:[qs: '${serializedQs}'] ...`);
                 this.log(`configuration:[transport: '${serializedTransport}'] ...`);
             }
@@ -68,7 +71,7 @@ export class SignalR {
 
     private merge(overrides: IConnectionOptions): SignalRConfiguration {
         const merged: SignalRConfiguration = new SignalRConfiguration();
-        merged.hubName = overrides.hubName || this._configuration.hubName;
+        merged.hubNames = overrides.hubNames || this._configuration.hubNames;
         merged.url = overrides.url || this._configuration.url;
         merged.qs = overrides.qs || this._configuration.qs;
         merged.logging = this._configuration.logging;

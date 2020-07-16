@@ -35,27 +35,27 @@ export class SignalRConnectionMock implements ISignalRConnection {
         return Promise.resolve(null); // TODO: implement
     }
 
-    public invoke(method: string, ...parameters: any[]): Promise<any> {
+    public invoke(hubName: string, method: string, ...parameters: any[]): Promise<any> {
         return Promise.resolve(null);
     }
 
-    public listen<T>(listener: BroadcastEventListener<T>): void {
+    public listen<T>(hubName: string, listener: BroadcastEventListener<T>): void {
         this._listeners[listener.event] = listener;
     }
 
-    public listenFor<T>(event: string): BroadcastEventListener<T> {
+    public listenFor<T>(hubName: string, event: string): BroadcastEventListener<T> {
         const listener = new BroadcastEventListener<T>(event);
-        this.listen(listener);
+        this.listen(hubName, listener);
         return listener;
     }
 
-    public listenForRaw(event: string): BroadcastEventListener<any[]> {
+    public listenForRaw(hubName: string, event: string): BroadcastEventListener<any[]> {
         const listener = new BroadcastEventListener<any[]>(event);
         this._listeners[listener.event] = listener;
         return listener;
     }
 
-    stopListening<T>(listener: BroadcastEventListener<T>): void {
+    stopListening<T>(hubName: string, listener: BroadcastEventListener<T>): void {
         delete this._listeners[listener.event];
     }
 }

@@ -9,7 +9,7 @@ describe('SignalR', () => {
 
     const configuration = new SignalRConfiguration();
     configuration.url = 'http://localhost:3000';
-    configuration.hubName = 'chathub';
+    configuration.hubNames = ['chathub'];
     configuration.qs = { user: 'donald' };
     configuration.logging = true;
     configuration.transport = ConnectionTransports.auto;

@@ -22,7 +22,7 @@ describe('SignalRConnectionMockManager', () => {
 
         function listen() {
             const broadcastListener = new BroadcastEventListener<AServerEvent>('OnMessageSent');
-            const listener = sut.mock.listen(broadcastListener);
+            const listener = sut.mock.listen('chathub', broadcastListener);
             const subscription = broadcastListener.subscribe((e: AServerEvent) => {
                 receivedEvents.push(e);
             });
